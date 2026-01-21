@@ -89,11 +89,16 @@ jobs:
           # 其他配置
           LOG_LEVEL: INFO
           DATA_DAYS: 60
-          MAX_CONCURRENT: 3
+          # MAX_CONCURRENT: 3
+          MAX_CONCURRENT: ${{ github.event.inputs.mode == 'full' && 3 || 1 }}
         run: |
           # 判断运行模式
-          MODE="${{ github.event.inputs.mode || 'full' }}"
-          
+          # MODE="${{ github.event.inputs.mode || 'full' }}"
+          if [ -n "${GITHUB_ACTIONS}" ]; then
+            MODE="${{ github.event.inputs.mode || 'ci-lite' }}"
+          else
+            MODE="${{ github.event.inputs.mode || 'full' }}"
+          fi
           echo "=========================================="
           echo "运行模式: $MODE"
           echo "自选股: $STOCK_LIST"
